@@ -1,0 +1,71 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Tomba Phone Validator Input",
+    "description": "Input configuration for Tomba Phone Validator Actor - Validate phone numbers and retrieve associated information",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+        "tombaApiKey": {
+            "title": "Tomba API Key",
+            "type": "string",
+            "description": "Your Tomba API key (starts with 'ta_'). Get it from https://app.tomba.io/api",
+            "example": "ta_xxxxxxxxxxxxxxxxxxxx",
+            "isSecret": true,
+            "editor": "textfield"
+        },
+        "tombaApiSecret": {
+            "title": "Tomba API Secret",
+            "type": "string",
+            "description": "Your Tomba secret key (starts with 'ts_'). Get it from https://app.tomba.io/api",
+            "example": "ts_xxxxxxxxxxxxxxxxxxxx",
+            "isSecret": true,
+            "editor": "textfield"
+        },
+        "phoneNumbers": {
+            "title": "Phone Numbers",
+            "type": "array",
+            "editor": "json",
+            "description": "Array of phone number objects with phoneNumber and optional countryCode",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "phoneNumber": {
+                        "title": "Phone Number",
+                        "type": "string",
+                        "minLength": 10,
+                        "maxLength": 20,
+                        "description": "Phone number to validate"
+                    },
+                    "countryCode": {
+                        "title": "Country Code",
+                        "type": "string",
+                        "pattern": "^[A-Z]{2}$",
+                        "description": "Optional ISO country code (e.g., 'US', 'GB', 'FR')"
+                    }
+                },
+                "required": ["phoneNumber"],
+                "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 1000,
+            "example": [
+                { "phoneNumber": "+1 (555) 123-4567" },
+                { "phoneNumber": "+33 6 12 34 56 78", "countryCode": "FR" },
+                { "phoneNumber": "07911 123456", "countryCode": "GB" },
+                { "phoneNumber": "+81 90-1234-5678" }
+            ]
+        },
+        "maxResults": {
+            "title": "Maximum Results",
+            "type": "integer",
+            "description": "Maximum number of phone numbers to validate",
+            "minimum": 1,
+            "maximum": 10000,
+            "default": 50,
+            "example": 100,
+            "editor": "number"
+        }
+    },
+    "required": ["tombaApiKey", "tombaApiSecret", "phoneNumbers"],
+    "additionalProperties": false
+}

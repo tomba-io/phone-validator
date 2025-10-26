@@ -1,0 +1,169 @@
+{
+    "fields": {
+        "type": "object",
+        "properties": {
+            "phone_number": {
+                "type": "string",
+                "description": "The phone number that was validated"
+            },
+            "valid": {
+                "type": "boolean",
+                "description": "Whether the phone number is valid"
+            },
+            "country_code": {
+                "type": ["string", "null"],
+                "description": "ISO country code (e.g., US, GB, FR)"
+            },
+            "country_name": {
+                "type": ["string", "null"],
+                "description": "Full country name"
+            },
+            "location": {
+                "type": ["string", "null"],
+                "description": "Geographic location information"
+            },
+            "carrier": {
+                "type": ["string", "null"],
+                "description": "Phone carrier/network provider"
+            },
+            "line_type": {
+                "type": ["string", "null"],
+                "description": "Type of phone line (mobile, landline, voip, etc.)"
+            },
+            "national_format": {
+                "type": ["string", "null"],
+                "description": "Phone number in national format"
+            },
+            "international_format": {
+                "type": ["string", "null"],
+                "description": "Phone number in international format"
+            },
+            "e164_format": {
+                "type": ["string", "null"],
+                "description": "Phone number in E.164 format"
+            },
+            "rfc3966_format": {
+                "type": ["string", "null"],
+                "description": "Phone number in RFC3966 URI format"
+            },
+            "timezone": {
+                "type": ["array", "null"],
+                "description": "Timezone information for the phone number location",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "input_country_code": {
+                "type": ["string", "null"],
+                "description": "Optional country code that was provided as input for validation context"
+            },
+            "source": {
+                "type": "string",
+                "description": "Source of the validation (tomba_phone_validator)"
+            },
+            "error": {
+                "type": ["string", "null"],
+                "description": "Error message if validation failed"
+            }
+        },
+        "required": ["phone_number", "valid", "source"]
+    },
+    "views": {
+        "overview": {
+            "title": "Overview",
+            "transformation": {
+                "fields": ["phone_number", "valid", "country_code", "carrier", "line_type", "national_format"]
+            },
+            "display": {
+                "component": "table",
+                "properties": {
+                    "phone_number": {
+                        "label": "Phone Number"
+                    },
+                    "valid": {
+                        "label": "Valid"
+                    },
+                    "country_code": {
+                        "label": "Country"
+                    },
+                    "carrier": {
+                        "label": "Carrier"
+                    },
+                    "line_type": {
+                        "label": "Line Type"
+                    },
+                    "national_format": {
+                        "label": "National Format"
+                    }
+                }
+            }
+        },
+        "detailed": {
+            "title": "Detailed View",
+            "transformation": {
+                "fields": [
+                    "phone_number",
+                    "valid",
+                    "country_code",
+                    "country_name",
+                    "location",
+                    "carrier",
+                    "line_type",
+                    "national_format",
+                    "international_format",
+                    "e164_format",
+                    "rfc3966_format",
+                    "timezone",
+                    "source",
+                    "error"
+                ]
+            },
+            "display": {
+                "component": "table"
+            }
+        },
+        "valid_numbers": {
+            "title": "Valid Phone Numbers",
+            "transformation": {
+                "fields": [
+                    "phone_number",
+                    "country_code",
+                    "carrier",
+                    "line_type",
+                    "national_format",
+                    "international_format"
+                ],
+                "filterBy": [
+                    {
+                        "field": "valid",
+                        "operator": "equals",
+                        "value": true
+                    }
+                ]
+            },
+            "display": {
+                "component": "table",
+                "properties": {
+                    "phone_number": {
+                        "label": "Phone Number"
+                    },
+                    "country_code": {
+                        "label": "Country"
+                    },
+                    "carrier": {
+                        "label": "Carrier"
+                    },
+                    "line_type": {
+                        "label": "Line Type"
+                    },
+                    "national_format": {
+                        "label": "National Format"
+                    },
+                    "international_format": {
+                        "label": "International Format"
+                    }
+                }
+            }
+        }
+    }
+}

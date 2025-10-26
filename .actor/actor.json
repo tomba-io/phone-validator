@@ -1,0 +1,16 @@
+{
+    "actorSpecification": 1,
+    "name": "phone-validator",
+    "title": "Tomba Phone Validator",
+    "description": "Validate phone numbers using Tomba API.",
+    "version": "0.0",
+    "buildTag": "latest",
+    "meta": {
+        "templateId": "ts-empty"
+    },
+    "dockerfile": "../Dockerfile",
+    "input": "./input_schema.json",
+    "storages": {
+        "dataset": "./dataset_schema.json"
+    }
+}
