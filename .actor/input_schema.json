@@ -11,7 +11,8 @@
             "description": "Your Tomba API key (starts with 'ta_'). Get it from https://app.tomba.io/api",
             "example": "ta_xxxxxxxxxxxxxxxxxxxx",
             "isSecret": true,
-            "editor": "textfield"
+            "editor": "textfield",
+            "prefill": "ta_xxxxxxxxxxxxxxxxxxxx"
         },
         "tombaApiSecret": {
             "title": "Tomba API Secret",
@@ -19,7 +20,8 @@
             "description": "Your Tomba secret key (starts with 'ts_'). Get it from https://app.tomba.io/api",
             "example": "ts_xxxxxxxxxxxxxxxxxxxx",
             "isSecret": true,
-            "editor": "textfield"
+            "editor": "textfield",
+            "prefill": "ts_xxxxxxxxxxxxxxxxxxxx"
         },
         "phoneNumbers": {
             "title": "Phone Numbers",
@@ -53,7 +55,8 @@
                 { "phoneNumber": "+33 6 12 34 56 78", "countryCode": "FR" },
                 { "phoneNumber": "07911 123456", "countryCode": "GB" },
                 { "phoneNumber": "+81 90-1234-5678" }
-            ]
+            ],
+            "prefill": [{ "phoneNumber": "+1 (555) 123-4567" }]
         },
         "maxResults": {
             "title": "Maximum Results",
