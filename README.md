@@ -257,7 +257,7 @@ Filtered view showing only successfully validated phone numbers with full detail
 
 ## Keywords
 
-phone validation, phone verification, phone number checker, contact validation, phone validator, mobile verification, landline validation, Tomba API, Apify actor, phone number analysis, carrier detection, number formatting, international numbers
+phone validation, phone verification, phone number checker, contact validation, phone validator, mobile verification, landline validation, phone number analysis, carrier detection, number formatting, international numbers
 
 ## Support
 
