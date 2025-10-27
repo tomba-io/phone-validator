@@ -1,0 +1,14 @@
+{
+    "actorOutputSchemaVersion": 1,
+    "title": "Phone Validator Output",
+    "description": "Output from Tomba Phone Validator Actor - phone number validation results",
+    "type": "object",
+    "properties": {
+        "results": {
+            "type": "string",
+            "title": "Phone Validation Results",
+            "description": "Phone number validation with carrier, location, and format information",
+            "template": "{{links.apiDefaultDatasetUrl}}/items"
+        }
+    }
+}
