@@ -255,6 +255,52 @@ Filtered view showing only successfully validated phone numbers with full detail
 - Monitor your Tomba usage dashboard
 - Consider Tomba's pricing tiers for volume usage
 
+## FAQ
+
+### General Questions
+
+**Q: What does phone validation do?**
+A: Phone validation checks if phone numbers are valid, reachable, and identifies the carrier, location, and phone type (mobile, landline, etc.) for each number.
+
+**Q: What validation checks are performed?**
+A: The service validates number format, checks if the number exists, identifies carrier information, determines phone type, and verifies reachability status.
+
+**Q: How accurate is phone validation?**
+A: Validation accuracy is typically 95%+ for most phone numbers. Results may vary by country and carrier, with some regions having more comprehensive data coverage.
+
+### Technical Questions
+
+**Q: How many phone numbers can I validate at once?**
+A: You can validate up to 1000 phone numbers per run. For optimal performance, process 50-200 numbers per batch.
+
+**Q: What phone number formats are accepted?**
+A: Various formats are supported including international (+1 555-123-4567), national (555-123-4567), and local formats. Including country codes improves accuracy.
+
+**Q: Do I need to specify country codes?**
+A: While not always required, including country codes significantly improves validation accuracy, especially for international numbers.
+
+### Validation Results
+
+**Q: What do the different validation statuses mean?**
+A: Results include valid (number exists and reachable), invalid (number doesn't exist), and unknown (couldn't verify). Additional flags provide carrier and type information.
+
+**Q: What's the difference between mobile and landline validation?**
+A: Mobile numbers can be validated for reachability and carrier, while landlines are checked for existence and location. Mobile validation is typically more comprehensive.
+
+**Q: How should I handle international phone numbers?**
+A: Use full international format with country codes (+44, +1, etc.). Different countries have varying validation capabilities and data availability.
+
+### Business Applications
+
+**Q: How can this help reduce communication costs?**
+A: Validating numbers before calling or texting eliminates failed attempts, reduces bounce rates, and improves communication campaign efficiency.
+
+**Q: Is this useful for fraud prevention?**
+A: Yes! Validation helps identify suspicious numbers, temporary phones, and inconsistent location data that might indicate fraudulent activity.
+
+**Q: Can I use this for customer database cleaning?**
+A: Absolutely! Regular validation helps maintain clean contact databases, improves customer reachability, and ensures compliance with communication preferences.
+
 ## Keywords
 
 phone validation, phone verification, phone number checker, contact validation, phone validator, mobile verification, landline validation, phone number analysis, carrier detection, number formatting, international numbers
