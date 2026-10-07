@@ -26,6 +26,10 @@ All notable changes to this project will be documented in this file. See [standa
 - `tomba` upgraded to 1.1.1 (responses are now `{ data, rateLimit }`)
 - `apify` upgraded to 3.7.2
 
+### Bug Fixes
+
+- `countryCode` accepts lowercase codes (`gb`)
+
 ### 0.0.2 (2025-10-26)
 
 ### Bug Fixes

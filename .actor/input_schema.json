@@ -23,7 +23,7 @@
                     "countryCode": {
                         "title": "Country Code",
                         "type": "string",
-                        "pattern": "^[A-Z]{2}$",
+                        "pattern": "^[A-Za-z]{2}$",
                         "description": "Optional ISO country code (e.g., 'US', 'GB', 'FR')"
                     }
                 },

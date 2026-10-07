@@ -3,7 +3,14 @@ import assert from 'node:assert/strict';
 import { after, afterEach, describe, it } from 'node:test';
 
 import type { MockHandler, MockServer } from './helpers.js';
-import { removeStorage, runActor, startMockTomba, startStandbyActor, totalCharges } from './helpers.js';
+import {
+    inputSchemaErrors,
+    removeStorage,
+    runActor,
+    startMockTomba,
+    startStandbyActor,
+    totalCharges,
+} from './helpers.js';
 
 /** Real Tomba /phone-validator response data. */
 const VALID = {
@@ -449,5 +456,14 @@ describe('phone-validator standby (real-time API)', () => {
         } finally {
             await actor.stop();
         }
+    });
+});
+
+describe('input schema', () => {
+    it('accepts lowercase country codes', () => {
+        assert.deepEqual(
+            inputSchemaErrors({ phoneNumbers: [{ phoneNumber: '+44 20 7946 0958', countryCode: 'gb' }] }),
+            [],
+        );
     });
 });
