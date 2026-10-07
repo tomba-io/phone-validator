@@ -72,7 +72,7 @@ An invalid number (`valid: false`) is a non-empty answer and is charged.
 
 ## Architecture
 
-- `src/tomba.ts`: shared helper, identical in every Tomba Actor. It handles credentials, caching (`tomba-cache` key-value store), retries with exponential backoff, pay-per-event charging, budget reservation, the concurrency pool and resume state.
+- `src/tomba.ts`: shared helper, identical in every Tomba Actor. It handles credentials, caching (per-Actor `tomba-cache-<actorId>` key-value store; falls back to an in-run cache if it can't be opened), retries with exponential backoff, pay-per-event charging, budget reservation, the concurrency pool and resume state.
 - `src/main.ts`: input normalization (numbers trimmed, country codes uppercased, duplicates removed by digits + country code) and output mapping. Tomba returns `local_format`, `intl_format`, `timezones` and `region`; they are mapped to the `national_format`, `international_format`, `timezone` and `location` output fields used by the dataset schema.
 - The SDK call is `Phone.validator(phone, country_code?)` → `GET /phone-validator?phone=…&country_code=…`.
 - The `tomba` SDK v1.1.1 resolves every call to `{ data, rateLimit }`, where `data` is the response body. Its `.d.ts` types still declare the old return type, so always go through `callTomba()`.
@@ -84,3 +84,31 @@ An invalid number (`valid: false`) is a non-empty answer and is charged.
 - `test/helpers.ts`: mock server and Actor runner (identical in every Actor)
 
 Locally, the Apify SDK prices every event at $1 when `ACTOR_TEST_PAY_PER_EVENT=true`, so the tests use `maxTotalChargeUsd` as an event count.
+
+## Standby mode (real-time API)
+
+`.actor/actor.json` sets `usesStandbyMode: true` and `webServerSchema: ./web_server_schema.json` (OpenAPI 3).
+
+- `src/standby.ts` (shared, identical in every Actor): `runActor()` runs a batch job, or, when `APIFY_META_ORIGIN=STANDBY`, starts an HTTP server on `Actor.config.get('containerPort')`.
+    - `GET /` with the `x-apify-container-server-readiness-probe` header, or with no query: readiness / usage.
+    - `GET /?…`: input built by the Actor's `fromQuery()`.
+    - `POST /`: the same JSON input as a batch run.
+    - Responses: `200 { items }`, `400` invalid input, `402` max charge limit reached, `404`, `405`.
+- Every Actor's `run(input, ctx)` is shared by both modes: `ctx.push()` writes to the dataset in batch runs and to the HTTP response in Standby; `ctx.isDone()`/`ctx.markDone()` persist resume state only in batch runs.
+- `fromQuery()` reads `phone` (repeated or comma-separated) and applies `countryCode` (also `country_code`) to every number, plus `maxResults`. An unencoded `+` decodes to a space, so a leading space before a digit is read back as `+`.
+- Caching and pay-per-event charging work the same in both modes.
+
+Try it locally:
+
+```bash
+APIFY_META_ORIGIN=STANDBY ACTOR_WEB_SERVER_PORT=8080 TOMBA_API_KEY=ta_… TOMBA_API_SECRET=ts_… npm start
+curl "localhost:8080/?phone=%2B14155550132"
+```
+
+## Key-value store schema
+
+`.actor/key_value_store_schema.json` documents the default key-value store records (`INPUT`, `TOMBA_STATE`). The cross-run cache lives in the separate named store `tomba-cache-<actorId>`, one per Actor: under limited permissions an Actor can only open named storages it created itself, so the Tomba Actors must not share one store. If the store can't be opened, the run logs a warning and caches for this run only.
+
+## Memory
+
+`defaultMemoryMbytes` is 256: the Actor only makes HTTP calls, so more memory just costs more.

@@ -17,6 +17,9 @@ All notable changes to this project will be documented in this file. See [standa
 - Resume after migration or restart
 - Duplicate phone numbers are removed
 - Each dataset item now includes `charged` and `cached`
+- Real-time API (Apify Standby mode): `GET /?phone=…&countryCode=…` or `POST /` with the run input returns results as JSON, with an OpenAPI web server schema
+- Key-value store schema for the default store (`INPUT`, `TOMBA_STATE`)
+- Default memory set to 256 MB
 
 ### Dependencies
 

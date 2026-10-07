@@ -1,0 +1,305 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Tomba Phone Validator API",
+        "version": "1.0.0",
+        "description": "Real-time API (Apify Standby mode). Check whether phone numbers are valid and get their country, carrier, line type and standard formats. Each number checked costs $0.00312 (valid or not); numbers that can't be checked, errors and cached results are free."
+    },
+    "paths": {
+        "/": {
+            "get": {
+                "summary": "Validate one or more phone numbers",
+                "description": "Without query parameters, returns a short usage note (also used as the readiness probe).",
+                "parameters": [
+                    {
+                        "name": "phone",
+                        "in": "query",
+                        "description": "Phone number to validate. Repeat the parameter or separate values with commas for several numbers. Write `+` as `%2B` (an unencoded leading `+` is also accepted).",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "+14155550132"
+                    },
+                    {
+                        "name": "countryCode",
+                        "in": "query",
+                        "description": "ISO 3166-1 alpha-2 country code applied to every number, for numbers in national format.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "GB"
+                    },
+                    {
+                        "name": "country_code",
+                        "in": "query",
+                        "description": "Alias of `countryCode`.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "maxResults",
+                        "in": "query",
+                        "description": "Maximum number of validation results to return (default 50).",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "default": 50
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/Results"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "402": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Validate phone numbers using a JSON input",
+                "description": "Accepts the same JSON input as a normal Actor run.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "phoneNumbers": {
+                                        "type": "array",
+                                        "description": "Array of phone number objects with phoneNumber and optional countryCode",
+                                        "example": [
+                                            {
+                                                "phoneNumber": "+1 (555) 123-4567"
+                                            },
+                                            {
+                                                "phoneNumber": "+33 6 12 34 56 78",
+                                                "countryCode": "FR"
+                                            },
+                                            {
+                                                "phoneNumber": "07911 123456",
+                                                "countryCode": "GB"
+                                            },
+                                            {
+                                                "phoneNumber": "+81 90-1234-5678"
+                                            }
+                                        ],
+                                        "minItems": 1,
+                                        "maxItems": 1000,
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "phoneNumber": {
+                                                    "type": "string",
+                                                    "description": "Phone number to validate"
+                                                },
+                                                "countryCode": {
+                                                    "type": "string",
+                                                    "description": "Optional ISO country code (e.g., 'US', 'GB', 'FR')",
+                                                    "pattern": "^[A-Z]{2}$"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "maxResults": {
+                                        "type": "integer",
+                                        "description": "Maximum number of phone numbers to validate",
+                                        "minimum": 1,
+                                        "maximum": 10000,
+                                        "default": 50,
+                                        "example": 100
+                                    },
+                                    "maxConcurrency": {
+                                        "type": "integer",
+                                        "description": "How many Tomba requests run in parallel. There is no rate limit, so raise it for large lists.",
+                                        "minimum": 1,
+                                        "maximum": 50,
+                                        "default": 10
+                                    },
+                                    "maxRetries": {
+                                        "type": "integer",
+                                        "description": "How many times to retry a request after a network error, 429 or 5xx response (exponential backoff). Failed requests are never charged.",
+                                        "minimum": 0,
+                                        "maximum": 10,
+                                        "default": 3
+                                    },
+                                    "useCache": {
+                                        "type": "boolean",
+                                        "description": "Reuse results from previous runs for identical requests. Cached results are free.",
+                                        "default": true
+                                    },
+                                    "cacheTtlHours": {
+                                        "type": "integer",
+                                        "description": "How long cached results stay valid. 0 disables the cross-run cache.",
+                                        "minimum": 0,
+                                        "maximum": 720,
+                                        "default": 24
+                                    }
+                                },
+                                "required": ["phoneNumbers"],
+                                "example": {
+                                    "phoneNumbers": [
+                                        {
+                                            "phoneNumber": "07911 123456",
+                                            "countryCode": "GB"
+                                        },
+                                        {
+                                            "phoneNumber": "+14155550132"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/Results"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/Error"
+                    },
+                    "402": {
+                        "$ref": "#/components/responses/Error"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "responses": {
+            "Results": {
+                "description": "One row per phone number, in the same format as the dataset items.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "items": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/PhoneValidation"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "Error": {
+                "description": "Invalid input (400) or the run's max charge limit was reached (402).",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "schemas": {
+            "PhoneValidation": {
+                "type": "object",
+                "properties": {
+                    "phone_number": {
+                        "type": "string",
+                        "description": "The phone number that was validated"
+                    },
+                    "valid": {
+                        "type": "boolean",
+                        "description": "Whether the phone number is valid"
+                    },
+                    "country_code": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "ISO country code (e.g., US, GB, FR)"
+                    },
+                    "country_name": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Full country name"
+                    },
+                    "location": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Geographic location information"
+                    },
+                    "carrier": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Phone carrier/network provider"
+                    },
+                    "line_type": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Type of phone line (mobile, landline, voip, etc.)"
+                    },
+                    "national_format": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Phone number in national format"
+                    },
+                    "international_format": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Phone number in international format"
+                    },
+                    "e164_format": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Phone number in E.164 format"
+                    },
+                    "rfc3966_format": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Phone number in RFC3966 URI format"
+                    },
+                    "timezone": {
+                        "type": "array",
+                        "nullable": true,
+                        "description": "Timezone information for the phone number location",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "input_country_code": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Optional country code that was provided as input for validation context"
+                    },
+                    "source": {
+                        "type": "string",
+                        "description": "Source of the validation (tomba_phone_validator)"
+                    },
+                    "error": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Error message if validation failed"
+                    },
+                    "charged": {
+                        "type": "boolean",
+                        "description": "Whether this request was charged (pay-per-event)"
+                    },
+                    "cached": {
+                        "type": "boolean",
+                        "description": "Whether the result came from the cache (free)"
+                    }
+                }
+            }
+        }
+    }
+}
