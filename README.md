@@ -1,323 +1,175 @@
-# Tomba Phone Validator Actor
+# Tomba Phone Validator
 
-[![Actor](https://img.shields.io/badge/Apify-Actor-blue)](https://apify.com/actors)
-[![Tomba API](https://img.shields.io/badge/Tomba-API-green)](https://tomba.io)
-[![Rate Limit](https://img.shields.io/badge/Rate%20Limit-150%2Fmin-orange)](https://tomba.io/api)
+[![Price](https://img.shields.io/badge/Price-%243.12%20per%201K%20numbers-brightgreen)](#pricing)
+[![No signup](https://img.shields.io/badge/Tomba%20account-not%20needed-blue)](#quick-start)
+[![No rate limit](https://img.shields.io/badge/Rate%20limit-none-brightgreen)](#built-for-big-lists)
 
-A powerful Apify Actor that **validates phone numbers and retrieves their associated information** using the **Tomba Phone Validator API**. Perfect for data cleaning, contact verification, and phone number enrichment by validating phone numbers and getting detailed carrier, location, and formatting information.
+**Know which phone numbers are real before you dial.** Paste your list and find out in seconds whether each number is valid, where it is, whether it is mobile or landline and which carrier runs it. Every number comes back cleanly formatted and ready for your dialer or CRM.
 
-## Key Features
+No Tomba account. No API key. No subscription. **You pay $0.00312 per number, and only when we can check it.**
 
-- **Phone Number Validation**: Comprehensive validation of phone numbers from any country
-- **Carrier Information**: Identify phone carriers and network providers
-- **Line Type Detection**: Distinguish between mobile, landline, VoIP, and other line types
-- **Multiple Formats**: Get phone numbers in various standard formats (national, international, E.164, RFC3966)
-- **Location Data**: Country, region, and timezone information
-- **Bulk Processing**: Validate hundreds of phone numbers efficiently with rate limiting
-- **Rate Limited**: Respects Tomba's 150 requests per minute limit
-- **International Support**: Support for phone numbers from all countries
-- **Built-in Error Handling**: Robust processing with comprehensive error reporting
+## Why teams choose this Actor
 
-## How it works
+- **Start in 30 seconds**: Open the Actor, paste your numbers, click Start. Nothing to sign up for
+- **Pay only for results**: Numbers we can't check, errors and invalid inputs are free
+- **$3.12 per 1,000 numbers**: No monthly plan, no credits that expire, no minimum spend
+- **Clean formatting**: Get every number in local, international, E.164 and `tel:` formats
+- **More than valid or not**: Line type, carrier, country, region and time zone for every number
+- **Built for big lists**: No rate limit. Thousands of numbers run in parallel
+- **Never pay twice**: Numbers you checked in the last 24 hours come back from cache for free
+- **Export anywhere**: Download as CSV, Excel or JSON, or send results straight to your CRM with Apify integrations
 
-The Actor leverages Tomba's powerful Phone Validator API to perform comprehensive phone number validation:
+## What you can do with it
 
-### Process Flow
+| Goal                       | How validation helps                                                |
+| -------------------------- | ------------------------------------------------------------------- |
+| **Stop wasting calls**     | Remove invalid numbers before your sales team dials them            |
+| **Clean your CRM**         | Standardize every number to E.164 and spot bad entries              |
+| **Send SMS that arrive**   | Keep the mobile numbers and drop the landlines                      |
+| **Call at the right time** | Use the country and time zone to reach people during business hours |
+| **Check sign-ups**         | Validate the numbers people enter in your forms                     |
 
-1. **Authentication**: Connects to Tomba API using your credentials
-2. **Input Processing**: Accepts array of phone number objects with optional country codes
-3. **Phone Validation**: Uses Tomba's `validator` method for each phone number
-4. **Data Enrichment**: Extracts carrier, location, and formatting information
-5. **Rate Limiting**: Automatically handles 150 requests/minute limit
-6. **Data Storage**: Saves detailed validation results to Apify dataset
+## Quick start
 
-### What does Phone Validator return?
+1. Click **Try for free**
+2. Add your numbers to **Phone Numbers**, for example `{ "phoneNumber": "+1 415 555 0132" }`
+3. Click **Start**, then download your results as CSV, Excel or JSON
 
-For each validated phone number, the actor returns:
+That's it. No Tomba account or API key is needed.
 
-- **Phone Number**: The original input phone number
-- **Valid**: Whether the phone number is valid
-- **Carrier**: Phone carrier information (if available)
-- **Line Type**: Type of phone line (mobile, landline, etc.)
-- **Location**: Geographic location information
-- **Country**: Country associated with the number
-- **Format**: Phone number in national and international formats
-- **Input Country Code**: The country code used for validation context (if provided)
+## Input
 
-## Usage Examples
+| Field            | Required | Default | Description                                                                             |
+| ---------------- | -------- | ------- | --------------------------------------------------------------------------------------- |
+| `phoneNumbers`   | Yes      |         | Numbers to check. Each one has a `phoneNumber` and an optional two-letter `countryCode` |
+| `maxResults`     | No       | `50`    | Maximum number of phone numbers to check                                                |
+| `maxConcurrency` | No       | `10`    | How many numbers to check at the same time (1–50)                                       |
+| `maxRetries`     | No       | `3`     | How many times to retry a temporary failure (0–10)                                      |
+| `useCache`       | No       | `true`  | Reuse results from your previous runs for free                                          |
+| `cacheTtlHours`  | No       | `24`    | How long cached results stay valid (`0` turns the cache off)                            |
 
-### Basic Phone Validation
-
-```json
-{
-    "tombaApiKey": "ta_xxxxxxxxxxxxxxxxxxxx",
-    "tombaApiSecret": "ts_xxxxxxxxxxxxxxxxxxxx",
-    "phoneNumbers": [
-        { "phoneNumber": "+1 (555) 123-4567" },
-        { "phoneNumber": "+33 6 12 34 56 78" },
-        { "phoneNumber": "07911 123456", "countryCode": "GB" },
-        { "phoneNumber": "(202) 555-0123", "countryCode": "US" }
-    ],
-    "maxResults": 50
-}
-```
-
-### Phone Validation with Individual Country Codes
+Numbers in international format (starting with `+`) work on their own. For local numbers, add the `countryCode` (for example `GB` or `FR`).
 
 ```json
 {
-    "tombaApiKey": "ta_xxxxxxxxxxxxxxxxxxxx",
-    "tombaApiSecret": "ts_xxxxxxxxxxxxxxxxxxxx",
     "phoneNumbers": [
-        { "phoneNumber": "07911 123456", "countryCode": "GB" },
-        { "phoneNumber": "(202) 555-0123", "countryCode": "US" },
+        { "phoneNumber": "+1 (415) 555-0132" },
         { "phoneNumber": "06 12 34 56 78", "countryCode": "FR" },
-        { "phoneNumber": "030 12345678", "countryCode": "DE" }
+        { "phoneNumber": "07911 123456", "countryCode": "GB" }
     ],
-    "maxResults": 50
+    "maxResults": 500
 }
 ```
 
-All phone numbers must be provided as objects with a `phoneNumber` property. The `countryCode` is optional but recommended for more accurate validation.
+## Output
 
-## Quick Start
-
-### Prerequisites
-
-1. **Tomba Account**: Sign up at [Tomba.io](https://app.tomba.io/api) to get your API credentials
-
-### Getting Your API Keys
-
-1. Visit [Tomba API Dashboard](https://app.tomba.io/api)
-2. Copy your **API Key** (starts with `ta_`)
-3. Copy your **Secret Key** (starts with `ts_`)
-
-## Input Configuration
-
-### Required Parameters
-
-| Parameter        | Type                 | Description                     |
-| ---------------- | -------------------- | ------------------------------- |
-| `tombaApiKey`    | `string`             | Your Tomba API key (ta_xxxx)    |
-| `tombaApiSecret` | `string`             | Your Tomba secret key (ts_xxxx) |
-| `phoneNumbers`   | `PhoneNumberInput[]` | Array of phone number objects   |
-
-### Phone Number Input Format
-
-Each phone number must be provided as an object with the following structure:
-
-```typescript
-interface PhoneNumberInput {
-    phoneNumber: string; // Required: The phone number to validate
-    countryCode?: string; // Optional: ISO country code (e.g., 'US', 'GB', 'FR')
-}
-```
-
-### Optional Parameters
-
-| Parameter    | Type     | Default | Description                         |
-| ------------ | -------- | ------- | ----------------------------------- |
-| `maxResults` | `number` | `50`    | Maximum number of results to return |
-
-### Example Input
+You get one row per phone number:
 
 ```json
 {
-    "tombaApiKey": "ta_xxxxxxxxxxxxxxxxxxxx",
-    "tombaApiSecret": "ts_xxxxxxxxxxxxxxxxxxxx",
-    "phoneNumbers": [
-        { "phoneNumber": "+1 (555) 123-4567" },
-        { "phoneNumber": "+33 6 12 34 56 78", "countryCode": "FR" },
-        { "phoneNumber": "07911 123456", "countryCode": "GB" },
-        { "phoneNumber": "+81 90-1234-5678" }
-    ],
-    "maxResults": 100
-}
-```
-
-### Best Practices
-
-- **Input Format**: All phone numbers must be provided as objects with `phoneNumber` property
-- **Country Codes**: Include optional `countryCode` for improved validation accuracy
-- **Phone Format**: Phone numbers can be in any format - the API handles normalization
-- **International Numbers**: Include country codes for best validation results
-- **Rate Limits**: The Actor automatically handles Tomba's 150 requests/minute limit
-- **Batch Size**: Process 50-100 phone numbers at a time for optimal performance
-- **Data Quality**: Clean obvious formatting issues before validation to save API credits
-
-## Output Data Structure
-
-The Actor returns comprehensive validation information for each phone number:
-
-```json
-{
-    "phone_number": "+1 (555) 123-4567",
+    "phone_number": "+1 (415) 555-0132",
     "valid": true,
     "country_code": "US",
-    "country_name": "United States",
-    "location": "New York",
-    "carrier": "Verizon Wireless",
-    "line_type": "mobile",
-    "national_format": "(555) 123-4567",
-    "international_format": "+1 555-123-4567",
-    "e164_format": "+15551234567",
-    "rfc3966_format": "tel:+1-555-123-4567",
-    "timezone": ["America/New_York"],
-    "input_country_code": "US",
-    "source": "tomba_phone_validator"
+    "location": "California",
+    "carrier": "AT&T",
+    "line_type": "MOBILE",
+    "national_format": "(415) 555-0132",
+    "international_format": "+1 415-555-0132",
+    "e164_format": "+14155550132",
+    "rfc3966_format": "tel:+1-415-555-0132",
+    "timezone": ["America/Los_Angeles"],
+    "source": "tomba_phone_validator",
+    "charged": true,
+    "cached": false
 }
 ```
 
-### Data Fields Explained
+| Field                  | Description                                                    |
+| ---------------------- | -------------------------------------------------------------- |
+| `phone_number`         | The number you submitted                                       |
+| `valid`                | `true` if the number is a valid phone number                   |
+| `country_code`         | Country of the number, e.g. `US`                               |
+| `location`             | Region of the number, e.g. `California`, when available        |
+| `carrier`              | The phone carrier                                              |
+| `line_type`            | Type of line, e.g. `MOBILE` or `FIXED_LINE`                    |
+| `national_format`      | The number as dialed inside its country, e.g. `(415) 555-0132` |
+| `international_format` | The number in international format, e.g. `+1 415-555-0132`     |
+| `e164_format`          | The number in E.164 format, ideal for dialers and CRMs         |
+| `rfc3966_format`       | Click-to-call link, e.g. `tel:+1-415-555-0132`                 |
+| `timezone`             | Time zones of the number                                       |
+| `input_country_code`   | The country code you submitted, if any                         |
+| `source`               | Always `tomba_phone_validator`                                 |
+| `charged`              | `true` if this check was billed                                |
+| `cached`               | `true` if this result came from the cache (free)               |
+| `error`                | Why the number could not be checked, if applicable             |
 
-- **phone_number**: Original input phone number
-- **valid**: Boolean indicating if the phone number is valid
-- **country_code**: ISO country code (US, GB, FR, etc.)
-- **country_name**: Full country name
-- **location**: Geographic location information
-- **carrier**: Phone carrier/network provider name
-- **line_type**: Type of phone line (mobile, landline, voip, toll-free, etc.)
+The dataset has three ready-made views: **Overview**, **Detailed View** and **Valid Phone Numbers**.
 
-#### Phone Number Formats
+## Pricing
 
-- **national_format**: Local/national format (e.g., "(555) 123-4567")
-- **international_format**: International format (e.g., "+1 555-123-4567")
-- **e164_format**: E.164 standard format (e.g., "+15551234567")
-- **rfc3966_format**: RFC3966 URI format (e.g., "tel:+1-555-123-4567")
+**$0.00312 per number ($3.12 per 1,000).** No subscription and no Tomba account needed.
 
-#### Additional Information
+You are only charged when Tomba returns a usable answer:
 
-- **timezone**: Array of timezone identifiers for the location
-- **input_country_code**: The country code that was provided as input (if any)
-- **source**: Data source identifier (tomba_phone_validator)
-- **error**: Error message if validation failed
+| What happens                                    | Charged |
+| ----------------------------------------------- | ------- |
+| The number is checked and found valid           | Yes     |
+| The number is checked and found not valid       | Yes     |
+| The number can't be checked (no answer)         | No      |
+| Malformed input or any other error              | No      |
+| Temporary failure (it is retried automatically) | No      |
+| Result served from the cache                    | No      |
 
-## Use Cases
+Every row shows `charged` and `cached`, so you always know what you paid for. To cap your spend, set **Maximum cost per run** in the run options: the Actor stops cleanly when the limit is reached.
 
-### Data Quality & Cleaning
+## Built for big lists
 
-- **Contact Database Cleanup**: Validate phone numbers in CRM and marketing databases
-- **Import Validation**: Verify phone numbers during data import processes
-- **Lead Qualification**: Ensure contact information quality for sales teams
+- **No rate limit**: up to 50 numbers are processed at the same time
+- **Automatic retries**: temporary failures are retried for you, and never billed
+- **Resumable**: if a run is interrupted, it continues where it stopped without charging you again
+- **Cache**: repeat checks within 24 hours are free
+- **No duplicates**: the same number written in different ways (`+1 415 555 0132`, `+14155550132`) is checked once
 
-### Compliance & Security
+## Integrations
 
-- **User Registration**: Validate phone numbers during account creation
-- **Identity Verification**: Confirm phone number ownership and validity
-- **Fraud Prevention**: Detect invalid or suspicious phone numbers
-
-### Marketing & Outreach
-
-- **SMS Campaigns**: Ensure deliverability for SMS marketing campaigns
-- **Call Center Operations**: Validate phone numbers before outbound calling
-- **Customer Support**: Verify customer contact information
-
-### Business Intelligence
-
-- **Geographic Analysis**: Analyze customer distribution by phone number location
-- **Carrier Analysis**: Understand customer mobile vs. landline preferences
-- **Market Research**: Validate contact lists for research and surveys
-
-## Data Views
-
-The Actor provides specialized data views:
-
-### Overview View
-
-Quick summary showing phone number, validation status, country, carrier, line type, and national format
-
-### Detailed View
-
-Comprehensive view with all validation data, formatting options, and technical details
-
-### Valid Numbers View
-
-Filtered view showing only successfully validated phone numbers with full details
-
-## Resources & Documentation
-
-### API Documentation
-
-- [Tomba API Docs](https://tomba.io/api) - Complete API reference
-- [Phone Validator Endpoint](https://docs.tomba.io/api/phone#phone-validator) - Specific validation documentation
-- [Authentication Guide](https://app.tomba.io/api) - Get your API keys
-- [Pricing & Limits](https://tomba.io/pricing) - Understand rate limits and costs
-
-### Rate Limiting
-
-- Tomba limits to **150 requests per minute**
-- Actor automatically handles rate limiting with delays
-- Large phone number lists may take time to complete
-
-### Cost Considerations
-
-- Each phone number validation = 1 Tomba API request
-- Monitor your Tomba usage dashboard
-- Consider Tomba's pricing tiers for volume usage
+Run it on a schedule, call it from the Apify API, or connect it to Zapier, Make, Google Sheets, HubSpot, Slack and hundreds of other apps with [Apify integrations](https://docs.apify.com/platform/integrations). Webhooks let you trigger your own workflow as soon as a run finishes.
 
 ## FAQ
 
-### General Questions
+**Do I need a Tomba account or API key?**
+No. Everything is built in. You only pay the per-number price on Apify.
 
-**Q: What does phone validation do?**
-A: Phone validation checks if phone numbers are valid, reachable, and identifies the carrier, location, and phone type (mobile, landline, etc.) for each number.
+**How much does it cost?**
+$0.00312 per checked number ($3.12 per 1,000). Invalid numbers are still a real answer, so they are charged. Numbers that can't be checked, errors and cached lookups are free.
 
-**Q: What validation checks are performed?**
-A: The service validates number format, checks if the number exists, identifies carrier information, determines phone type, and verifies reachability status.
+**How many numbers can I check in one run?**
+Up to 1,000 per run, processed in parallel. There is no rate limit.
 
-**Q: How accurate is phone validation?**
-A: Validation accuracy is typically 95%+ for most phone numbers. Results may vary by country and carrier, with some regions having more comprehensive data coverage.
+**What format should my numbers use?**
+Any common format works: spaces, dashes, dots and brackets are fine. Use the international format with `+` and the country prefix, or add a two-letter `countryCode` for local numbers.
 
-### Technical Questions
+**Which countries are supported?**
+International numbers are supported. Each result tells you the country of the number.
 
-**Q: How many phone numbers can I validate at once?**
-A: You can validate up to 1000 phone numbers per run. For optimal performance, process 50-200 numbers per batch.
+**Can I tell mobile numbers from landlines?**
+Yes. Every result includes the line type and the carrier.
 
-**Q: What phone number formats are accepted?**
-A: Various formats are supported including international (+1 555-123-4567), national (555-123-4567), and local formats. Including country codes improves accuracy.
+**What if my run is interrupted?**
+It picks up where it stopped. Numbers already checked are not charged again.
 
-**Q: Do I need to specify country codes?**
-A: While not always required, including country codes significantly improves validation accuracy, especially for international numbers.
-
-### Validation Results
-
-**Q: What do the different validation statuses mean?**
-A: Results include valid (number exists and reachable), invalid (number doesn't exist), and unknown (couldn't verify). Additional flags provide carrier and type information.
-
-**Q: What's the difference between mobile and landline validation?**
-A: Mobile numbers can be validated for reachability and carrier, while landlines are checked for existence and location. Mobile validation is typically more comprehensive.
-
-**Q: How should I handle international phone numbers?**
-A: Use full international format with country codes (+44, +1, etc.). Different countries have varying validation capabilities and data availability.
-
-### Business Applications
-
-**Q: How can this help reduce communication costs?**
-A: Validating numbers before calling or texting eliminates failed attempts, reduces bounce rates, and improves communication campaign efficiency.
-
-**Q: Is this useful for fraud prevention?**
-A: Yes! Validation helps identify suspicious numbers, temporary phones, and inconsistent location data that might indicate fraudulent activity.
-
-**Q: Can I use this for customer database cleaning?**
-A: Absolutely! Regular validation helps maintain clean contact databases, improves customer reachability, and ensures compliance with communication preferences.
-
-## Keywords
-
-phone validation, phone verification, phone number checker, contact validation, phone validator, mobile verification, landline validation, phone number analysis, carrier detection, number formatting, international numbers
+**How do I limit what I spend?**
+Set **Maximum cost per run** before you start. The Actor stops as soon as the limit is reached.
 
 ## Support
 
-If you need any help, have questions, or encounter any issues while using Tomba.io, please don't hesitate to reach out to our support team. You can contact us via:
+Questions or feedback? We're happy to help:
 
 - **Email**: support@tomba.io
-- **Live chat**: Available on the Tomba.io website during business hours
-
-## Contributing
-
-We welcome contributions to improve this actor. Please feel free to submit issues, feature requests, or pull requests to help make this tool even better for the community.
+- **Live chat**: on [tomba.io](https://tomba.io) during business hours
+- **Issues**: use the **Issues** tab on this Actor's page
 
 ## About Tomba
 
-Founded in 2020, Tomba prides itself on being the most reliable, accurate, and in-depth source of email address data available anywhere. We process terabytes of data to produce our Email finder API.
+Founded in 2020, [Tomba](https://tomba.io) is a B2B data platform for finding, verifying and enriching business contacts. Our Email Finder, Domain Search and Email Verifier help sales and marketing teams reach the right people.
 
 ![Tomba Logo](https://tomba.io/logo.png)

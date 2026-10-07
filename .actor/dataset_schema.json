@@ -66,6 +66,14 @@
             "error": {
                 "type": ["string", "null"],
                 "description": "Error message if validation failed"
+            },
+            "charged": {
+                "type": "boolean",
+                "description": "Whether this request was charged (pay-per-event)"
+            },
+            "cached": {
+                "type": "boolean",
+                "description": "Whether the result came from the cache (free)"
             }
         },
         "required": ["phone_number", "valid", "source"]
@@ -117,7 +125,9 @@
                     "rfc3966_format",
                     "timezone",
                     "source",
-                    "error"
+                    "error",
+                    "charged",
+                    "cached"
                 ]
             },
             "display": {
