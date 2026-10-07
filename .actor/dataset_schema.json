@@ -5,11 +5,11 @@
         "type": "object",
         "properties": {
             "phone_number": {
-                "type": "string",
+                "type": ["string", "null"],
                 "description": "The phone number that was validated"
             },
             "valid": {
-                "type": "boolean",
+                "type": ["boolean", "null"],
                 "description": "Whether the phone number is valid"
             },
             "country_code": {
